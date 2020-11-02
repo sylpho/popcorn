@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "babel src -d dist/js -x \".ts\""
+    "build": "babel src -d dist/js -x \".ts\" -x \".tsx\""
   },
   "repository": "https://github.com/sylpho/popcorn",
   "keywords": [
@@ -22,6 +22,7 @@
     "electron": "^10.1.5"
   },
   "dependencies": {
+    "@babel/preset-react": "^7.12.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0"
