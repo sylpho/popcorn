@@ -4,7 +4,7 @@
   "description": "Code editor",
   "main": "main.js",
   "scripts": {
-    "start": "electron dist",
+    "start": "electron .",
     "build": "webpack"
   },
   "repository": "https://github.com/sylpho/popcorn",
