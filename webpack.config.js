@@ -1,10 +1,12 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.tsx',
-  output: {
-    path: path.resolve(__dirname, 'dist/js/'),
-    filename: 'popcorn.bundle.js'
+	devtool: 'source-map',
+	entry: './src/index.tsx',
+	mode: 'development',
+	output: {
+		path: path.resolve(__dirname, 'dist/js/'),
+		filename: 'popcorn.bundle.js'
 	},
 	module: {
 		rules: [
