@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 
 export
-module Popcorn {
+namespace Popcorn {
 
 	const frmElm = (obj) =>
 		<div className="frame" style={{ grid: "100% / 100%" }}>
