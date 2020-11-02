@@ -1,7 +1,7 @@
 body {
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
+	margin: 0;
+	width: 100vw;
+	height: 100vh;
 }
 
 #root {
@@ -14,4 +14,21 @@ body {
 	display: grid;
 	width: 100%;
 	height: 100%;
+}
+
+.hover-root {
+	position: relative;
+	display: inline-block;
+}
+
+.hover-content {
+	display: none;
+	z-index: 1;
+	border: 1px solid rgba(34, 36, 38, 0.15);
+	border-radius: 0.28571429rem;
+	box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
+}
+
+.hover-root:hover .hover-content {
+	display: block;
 }
