@@ -1,22 +1,24 @@
 {
-  "name": "electron-quick-start",
+  "name": "popcorn",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Code editor",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "babel src -d dist/js -x \".ts\""
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/sylpho/popcorn",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Popcorn"
   ],
   "author": "GitHub",
-  "license": "CC0-1.0",
+  "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
     "electron": "^10.1.5"
   },
   "dependencies": {
