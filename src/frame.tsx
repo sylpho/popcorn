@@ -1,11 +1,16 @@
-import React from "react";
+import React, { ReactElement } from "react";
 
-export class Frame extends React.Component {
-	render() {
-		return (
-			<div className="frame" style={{ grid: '100% / 100%' }}>
-				{ this.props.children }
-			</div>
-		);
+export
+module Popcorn {
+
+	const frmElm = (obj) =>
+		<div className="frame" style={{ grid: "100% / 100%" }}>
+			{ obj }
+		</div>;
+
+	export
+	class Frame extends React.Component {
+		render = () => frmElm(this.props.children);
 	}
+
 }
