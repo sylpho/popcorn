@@ -35,6 +35,7 @@ body {
 
 .panel {
 	display: block;
+	overflow: hidden;
 }
 
 .panel-shell {
