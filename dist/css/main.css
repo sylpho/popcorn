@@ -42,3 +42,38 @@ body {
 .panel-shell {
 	padding: 2px;
 }
+
+.list-container {
+	display: inline-block;
+}
+
+.list {
+	display: flex;
+	flex-direction: column;
+}
+
+.list p {
+	margin: 0;
+}
+
+.list-item {
+	display: inline-block;
+	cursor: pointer;
+	padding: 0.5rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+.list-item:first-child {
+	border-top-left-radius: 0.25em;
+	border-top-right-radius: 0.25em;
+}
+
+.list-item:last-child {
+	border-bottom-left-radius: 0.25em;
+	border-bottom-right-radius: 0.25em;
+}
+
+.list-item:hover {
+	background-color: rgba(1, 1, 1, 0.1);
+}

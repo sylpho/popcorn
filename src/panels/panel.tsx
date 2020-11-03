@@ -3,10 +3,15 @@ import { DropDown } from "../widget/drop_down"
 
 export class Panel extends React.Component {
 	render() {
+		const dropdownItems = [
+			{ id: 'btn', label: 'btn' },
+			{ id: 'eee', label: 'eee' }
+		];
+		
 		return (
 			<div className="panel panel-shell">
 				<div className="panel">
-					<DropDown></DropDown>
+					<DropDown items={ dropdownItems }/>
 					{this.props.children}
 				</div>
 			</div>
