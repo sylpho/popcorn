@@ -3,11 +3,12 @@ import { DropDown } from "../widget/drop_down"
 
 export class Panel extends React.Component {
 	render() {
+		// TODO make a nice api for building this
 		const dropdownItems = [
 			{ id: 'btn', label: 'btn' },
 			{ id: 'eee', label: 'eee' }
 		];
-		
+
 		return (
 			<div className="panel panel-shell">
 				<div className="panel">
