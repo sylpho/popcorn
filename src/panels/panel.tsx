@@ -1,14 +1,14 @@
 import React from "react";
-import { HoverReveal } from "../widget/hover_reveal"
+import { DropDown } from "../widget/drop_down"
 
 export class Panel extends React.Component {
 	render() {
 		return (
-			<div style={{ display: 'block' }}>
-				<HoverReveal>
-					<p style={{ margin: 0 }}>Panel types go here</p>
-				</HoverReveal>
-				{ this.props.children }
+			<div className="panel panel-shell">
+				<div className="panel">
+					<DropDown></DropDown>
+					{this.props.children}
+				</div>
 			</div>
 		);
 	}
