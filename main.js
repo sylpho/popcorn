@@ -8,7 +8,7 @@ function createWindow () {
     width: 1920,
     height: 1080,
     webPreferences: {
-			nodeIntegration: true, // is insecure but i'm not dealing with preload.js rn
+			nodeIntegration: false, // is insecure but i'm not dealing with preload.js
 			enableRemoteModule: true, // turn off remote
       preload: path.join(__dirname, 'preload.js')
     }

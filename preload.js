@@ -1,5 +1,16 @@
-// All of the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
-window.addEventListener('DOMContentLoaded', () => {
+const { remote } = require("electron");
+const { app } = remote;
 
-})
+const path = require("path");
+const fs = require("fs");
+
+/*
+	TODO:
+	sandbox the read and write functions so they only have access
+	to the userData folder, and the current working directory.
+*/
+window.fs = {
+	configPath: path.join(app.getPath("userData"), 'config.json'),
+	write: fs.writeFile,
+	read: fs.readFile
+};
