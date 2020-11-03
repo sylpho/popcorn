@@ -6,9 +6,15 @@ let dragTrack;
 
 export class PanelDivider extends React.Component {
 	render() {
+		let className : string;
+		if (this.props.axis == Frame.HORIZONTAL)
+			className = "divider d-horz";
+		else
+			className = "divider d-vert";
+
 		return (
 			<div
-				className="divider"
+				className={ className }
 				index={ this.props.index }
 				target={ this.props.target }
 				axis={ this.props.axis }
@@ -45,19 +51,27 @@ function dragStartHandle(e) {
 		if (i % 2 == 1) continue;
 
 		// convert
-		style[i] = children[i].offsetWidth + "px";
+		if (axis == Frame.HORIZONTAL)
+			style[i] = children[i].offsetWidth + "px";
+		else
+			style[i] = children[i].offsetHeight + "px";
 	}
 
 	// apply pixel distribution
 	elem.style[accessor] = style.join(" ");
 
+	// get starting value
+	let startVal : number;
+	if (axis == Frame.HORIZONTAL) startVal = e.pageX;
+	else startVal = e.pageY;
+
 	// start tracking
 	dragTrack = {
-		x: e.pageX,
-		y: e.pageY,
+		val: startVal,
 		elem: c,
 		index: index,
-		style: style
+		style: style,
+		axis: axis
 	};
 
 	$(document).on("mouseup", dragEndHandle);
@@ -74,15 +88,19 @@ function dragEndHandle(e) {
 	const elem = $(dragTrack.elem)[0];
 
 	// get axis
-	const axis = parseInt(e.target.attributes.axis.nodeValue);
-	const accessor = (axis == Frame.HORIZONTAL)
+	const axis : number = dragTrack.axis;
+	const accessor : string = (axis == Frame.HORIZONTAL)
 		? "grid-template-columns" : "grid-template-rows";
 
 	// get parent width
-	const parentWidth = elem.offsetWidth;
+	let parentSize : number;
+	if (axis == Frame.HORIZONTAL)
+		parentSize = elem.offsetWidth;
+	else
+		parentSize = elem.offsetHeight;
 
 	// get current distribution
-	let style = elem.style[accessor].split(" ");
+	let style : [string] = elem.style[accessor].split(" ");
 
 	// convert distribution to percentages
 	for (let i = 0; i < style.length; i++) {
@@ -90,8 +108,8 @@ function dragEndHandle(e) {
 		if (i % 2 == 1) continue;
 
 		// convert
-		let num = style[i].substring(0, style[i].length - 2);
-		style[i] = (num / parentWidth) * 100 + "%";
+		let num : number = parseInt(style[i].substring(0, style[i].length - 2));
+		style[i] = (num / parentSize) * 100 + "%";
 	}
 
 	// apply percentage distribution
@@ -100,18 +118,29 @@ function dragEndHandle(e) {
 
 // drag movement handler
 function dragMoveHandler(e) {
-	// get x difference
-	const xDiff = e.pageX - dragTrack.x;
-	dragTrack.x = e.pageX;
+	// get axis
+	const axis = dragTrack.axis;
+	const accessor = (axis == Frame.HORIZONTAL)
+		? "grid-template-columns" : "grid-template-rows";
 
-	// apply x difference
+	// get x difference
+	let diff;
+	if (axis == Frame.HORIZONTAL) {
+		diff = e.pageX - dragTrack.val;
+		dragTrack.val = e.pageX;
+	} else {
+		diff = e.pageY - dragTrack.val;
+		dragTrack.val = e.pageY;
+	}
+
+	// apply difference
 	let dividerChildIndex = dragTrack.index * 2 - 1;
 	let str1 = dragTrack.style[dividerChildIndex - 1];
 	let str2 = dragTrack.style[dividerChildIndex + 1];
 	let num1 = parseInt(str1.substring(0, str1.length - 2));
 	let num2 = parseInt(str2.substring(0, str2.length - 2));
-	num1 += xDiff;
-	num2 -= xDiff;
+	num1 += diff;
+	num2 -= diff;
 	str1 = num1 + "px";
 	str2 = num2 + "px";
 	dragTrack.style[dividerChildIndex - 1] = str1;
@@ -119,11 +148,6 @@ function dragMoveHandler(e) {
 
 	// get target container
 	const elem = $(dragTrack.elem)[0];
-
-	// get axis
-	const axis = parseInt(e.target.attributes.axis.nodeValue);
-	const accessor = (axis == Frame.HORIZONTAL)
-		? "grid-template-columns" : "grid-template-rows";
 
 	// apply percentage distribution
 	elem.style[accessor] = dragTrack.style.join(" ");

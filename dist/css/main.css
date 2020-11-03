@@ -84,6 +84,10 @@ body {
     background-color: blue;
 }
 
-.divider:hover {
+.d-horz:hover {
     cursor: ew-resize;
+}
+
+.d-vert:hover {
+    cursor: ns-resize;
 }
