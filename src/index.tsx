@@ -1,15 +1,12 @@
 import React, { ReactElement } from "react";
 import ReactDOM from "react-dom";
-import { makeFrame } from "./frame"
+import { Frame } from "./frame"
 import { Panel } from "./panels/panel"
 
-let rootFrame: ReactElement = makeFrame(
-	[
-		<Panel/>,
-		<Panel/>,
-		<Panel/>
-	],
-	"frame-1"
+let rootFrame: ReactElement = Frame.build(
+	"frame-1",
+	Frame.VERTICAL,
+	[ <Panel/>, <Panel/>, <Panel/> ]
 );
 
 ReactDOM.render(rootFrame, document.getElementById("root"));

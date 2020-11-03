@@ -1,5 +1,6 @@
 import React from "react";
 import $ from 'domtastic';
+import { Frame } from "../frame";
 
 let dragTrack;
 
@@ -10,6 +11,7 @@ export class PanelDivider extends React.Component {
 				className="divider"
 				index={ this.props.index }
 				target={ this.props.target }
+				axis={ this.props.axis }
 				onMouseDown={ dragStartHandle }
 			></div>
 		);
@@ -23,11 +25,16 @@ function dragStartHandle(e) {
 	const c = e.target.attributes.target.nodeValue;
 	const elem = $(c)[0];
 
+	// get axis
+	const axis = parseInt(e.target.attributes.axis.nodeValue);
+	const accessor = (axis == Frame.HORIZONTAL)
+		? "grid-template-columns" : "grid-template-rows";
+
 	// get children
 	const children = elem.children;
 
 	// get current distribution
-	let style = elem.style["grid-template-columns"].split(" ");
+	let style = elem.style[accessor].split(" ");
 
 	// get current divider index
 	let index = parseInt(e.target.attributes.index.nodeValue);
@@ -42,7 +49,7 @@ function dragStartHandle(e) {
 	}
 
 	// apply pixel distribution
-	elem.style["grid-template-columns"] = style.join(" ");
+	elem.style[accessor] = style.join(" ");
 
 	// start tracking
 	dragTrack = {
@@ -66,11 +73,16 @@ function dragEndHandle(e) {
 	// get target container
 	const elem = $(dragTrack.elem)[0];
 
+	// get axis
+	const axis = parseInt(e.target.attributes.axis.nodeValue);
+	const accessor = (axis == Frame.HORIZONTAL)
+		? "grid-template-columns" : "grid-template-rows";
+
 	// get parent width
 	const parentWidth = elem.offsetWidth;
 
 	// get current distribution
-	let style = elem.style["grid-template-columns"].split(" ");
+	let style = elem.style[accessor].split(" ");
 
 	// convert distribution to percentages
 	for (let i = 0; i < style.length; i++) {
@@ -83,7 +95,7 @@ function dragEndHandle(e) {
 	}
 
 	// apply percentage distribution
-	elem.style["grid-template-columns"] = style.join(" ");
+	elem.style[accessor] = style.join(" ");
 }
 
 // drag movement handler
@@ -108,6 +120,11 @@ function dragMoveHandler(e) {
 	// get target container
 	const elem = $(dragTrack.elem)[0];
 
+	// get axis
+	const axis = parseInt(e.target.attributes.axis.nodeValue);
+	const accessor = (axis == Frame.HORIZONTAL)
+		? "grid-template-columns" : "grid-template-rows";
+
 	// apply percentage distribution
-	elem.style["grid-template-columns"] = dragTrack.style.join(" ");
+	elem.style[accessor] = dragTrack.style.join(" ");
 }
