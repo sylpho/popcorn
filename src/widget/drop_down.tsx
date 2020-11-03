@@ -5,8 +5,8 @@ import { HoverReveal } from "../widget/hover_reveal"
 export class DropdownEntry extends React.Component {
 	render() {
 		return (
-			<div key={ this.props.item.id } className="list-item">
-				<p>{ this.props.item.label }</p>
+			<div className="list-item">
+				<p>{ this.props.label }</p>
 			</div>
 		);
 	}
@@ -23,7 +23,10 @@ export class DropDown extends React.Component {
 						<div className="list">
 							{
 								items.map(
-									item => <DropdownEntry item={ item } />
+									item => <DropdownEntry
+										key={ item.id }
+										label={ item.label }
+									/>
 								)
 							}
 						</div>

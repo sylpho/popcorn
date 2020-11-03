@@ -1,8 +1,15 @@
 import React, { ReactElement } from "react";
 import ReactDOM from "react-dom";
-import { Popcorn } from "./frame"
+import { makeFrame } from "./frame"
 import { Panel } from "./panels/panel"
 
-let rootFrame: ReactElement = <Popcorn.Frame><Panel></Panel></Popcorn.Frame>
+let rootFrame: ReactElement = makeFrame(
+	[
+		<Panel/>,
+		<Panel/>,
+		<Panel/>
+	],
+	"frame-1"
+);
 
 ReactDOM.render(rootFrame, document.getElementById("root"));
