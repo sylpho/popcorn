@@ -5,9 +5,11 @@ const path = require('path')
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1920,
+    height: 1080,
     webPreferences: {
+			nodeIntegration: true, // is insecure but i'm not dealing with preload.js rn
+			enableRemoteModule: true, // turn off remote
       preload: path.join(__dirname, 'preload.js')
     }
   })
@@ -24,7 +26,7 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
-  
+
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
