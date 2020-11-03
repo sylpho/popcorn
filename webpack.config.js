@@ -5,7 +5,7 @@ module.exports = {
 	resolve: {
 		extensions: ['.tsx', '.ts', '.js', '.json']
 	},
-	target: 'electron-renderer',
+	target: 'electron-main',
 	entry: './src/index.tsx',
 	mode: 'development',
 	output: {

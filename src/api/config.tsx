@@ -1,6 +1,4 @@
-const { remote } = require('electron');
-const { app } = remote; // or `const app = remote.app`
-
+import { app } from "electron"
 import fs from "fs"
 import path from "path"
 
