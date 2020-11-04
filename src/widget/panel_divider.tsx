@@ -34,11 +34,12 @@ export class PanelDivider extends React.Component<PanelProps, {}> {
 // mouse down event handler
 function dragStartHandle(e) {
 	// get target container
-	const c = e.target.attributes.target.nodeValue;
+	console.log(e.target.attributes);
+	const c = e.target.attributes["data-target"].nodeValue;
 	const elem = $(c)[0];
 
 	// get axis
-	const axis = parseInt(e.target.attributes.axis.nodeValue);
+	const axis = parseInt(e.target.attributes["data-axis"].nodeValue);
 	const accessor = (axis == Frame.HORIZONTAL)
 		? "grid-template-columns" : "grid-template-rows";
 
@@ -49,7 +50,7 @@ function dragStartHandle(e) {
 	let style = elem.style[accessor].split(" ");
 
 	// get current divider index
-	let index = parseInt(e.target.attributes.index.nodeValue);
+	let index = parseInt(e.target.attributes["data-index"].nodeValue);
 
 	// convert everything to pixels
 	for (let i = 0; i < style.length; i++) {

@@ -5,15 +5,16 @@ import { PopMenubar } from "./menu";
 import { Panel } from "./panels/panel";
 import { Config } from "./api/config";
 
-let rootFrame: ReactElement = Frame.build(
+const rootFrame: ReactElement = Frame.build(
 	"frame-1",
 	Frame.VERTICAL,
 	[ <Panel/>, <Panel/>, <Panel/> ]
 );
 
-let menubar: ReactElement = <PopMenubar id="main"></PopMenubar>;
-ReactDOM.render(menubar, document.getElementById("root"));
-ReactDOM.render(rootFrame, document.getElementById("root"));
+const menubar: ReactElement = <PopMenubar id="main"></PopMenubar>;
+const root : ReactElement = <div className="full-window">{[ menubar, rootFrame ]}</div>;
+
+ReactDOM.render(root, document.getElementById("root"));
 
 Config.fetch().then((config) => {
 	console.log(config);

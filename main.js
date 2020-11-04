@@ -7,7 +7,7 @@ function createWindow () {
   const mainWindow = new BrowserWindow({
     width: 1920,
 		height: 1080,
-		frame: false,
+		frame: true,
     webPreferences: {
 			nodeIntegration: false, // is insecure but i'm not dealing with preload.js
 			enableRemoteModule: true, // turn off remote
