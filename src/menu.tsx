@@ -1,5 +1,5 @@
 import React from "react";
-import $ from "domtastic";
+import $ from "cash-dom";
 
 type MenuProps = {
 	id: string
