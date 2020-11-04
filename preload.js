@@ -15,6 +15,9 @@ window.fs = {
 	read: fs.readFile
 };
 
+window.electron = {
+	application: app
+};
 
 window.menu = {
 	openFile: dialog.showOpenDialog

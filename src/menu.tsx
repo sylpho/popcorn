@@ -8,6 +8,12 @@ type MenuProps = {
 /***/
 class Menubar extends React.Component<MenuProps> {
 	/***/
+	closeApplication() : void {
+		var wnd = window as any;
+		wnd.electron.application.quit();
+	}
+
+	/***/
 	changeBackground() : void {
 		var wnd       = window as any;
 		var openProps = { properties: [ "openFile" ] };
@@ -30,7 +36,14 @@ class Menubar extends React.Component<MenuProps> {
 	render() : JSX.Element {
 		return (
 			<div className="menubar" id={ this.props.id }>
-				<button type="button" onClick={this.changeBackground}>Background</button>
+				<div style={{ display: "inline-flex" }}>
+					<button type="button" onClick={this.changeBackground}>Background</button>
+				</div>
+				<div style={{ display: "inline-flex" }}>
+					<button type="button" onClick={this.closeApplication}>
+						<i className="gg-close"></i>
+					</button>
+				</div>
 			</div>
 		);
 	}
