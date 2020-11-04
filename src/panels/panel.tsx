@@ -1,7 +1,7 @@
 import React from "react";
 import { DropDown } from "../widget/drop_down"
 
-export class Panel extends React.Component {
+class Panel extends React.Component {
 	render() {
 		// TODO make a nice api for building this
 		const dropdownItems = [
@@ -19,3 +19,5 @@ export class Panel extends React.Component {
 		);
 	}
 }
+
+export default Panel;

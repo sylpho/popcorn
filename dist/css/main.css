@@ -4,11 +4,8 @@ body {
 	height: 100vh;
 }
 
-#root {
+#ApplicationRoot {
 	background-size: cover;
-}
-
-.full-window {
 	display: block;
 	width: 100%;
 	height: 100%;

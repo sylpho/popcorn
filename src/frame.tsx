@@ -1,7 +1,7 @@
 import React, { CSSProperties, ReactElement } from "react";
 import { PanelDivider } from "./widget/panel_divider";
 
-export namespace Frame {
+namespace Frame {
 	export const HORIZONTAL : number = 0;
 	export const VERTICAL : number = 1;
 
@@ -73,3 +73,5 @@ export namespace Frame {
 		}
 	}
 }
+
+export default Frame;

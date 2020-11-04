@@ -6,7 +6,7 @@ type MenuProps = {
 };
 
 /***/
-export class PopMenubar extends React.Component<MenuProps> {
+class Menubar extends React.Component<MenuProps> {
 	/***/
 	changeBackground() : void {
 		var wnd       = window as any;
@@ -35,3 +35,5 @@ export class PopMenubar extends React.Component<MenuProps> {
 		);
 	}
 }
+
+export default Menubar;

@@ -1,6 +1,6 @@
 import React from "react"
 import $ from 'cash-dom';
-import { Frame } from "../frame";
+import Frame from "../frame";
 
 let dragTrack;
 
