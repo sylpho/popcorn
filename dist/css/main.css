@@ -4,6 +4,10 @@ body {
 	height: 100vh;
 }
 
+#root {
+	background-size: cover;
+}
+
 .full-window {
 	display: block;
 	width: 100%;

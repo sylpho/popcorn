@@ -17,7 +17,12 @@ export class PopMenubar extends React.Component<MenuProps> {
 			if (response.filePaths === null)
 				return;
 			// Take first file and put it as the background image of the root.
-			$("#root").css("background-image", `url("${response.filePaths[0]}"`);
+			let path: string[] = response.filePaths[0].split('');
+			for (let i = 0; i < path.length; i++)
+				if (path[i] == '\\')
+					path[i] = '/';
+
+			$("#root").css("background-image", `url("${ path.join("") }"`);
 		});
 	}
 
