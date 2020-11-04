@@ -1,6 +1,11 @@
 import React from "react";
 
-export class HoverReveal extends React.Component {
+type HoverRevealProps = {
+	trigger: any,
+	content: any
+};
+
+export class HoverReveal extends React.Component<HoverRevealProps> {
 	render() {
 		return (
 			<div className="hover-root">

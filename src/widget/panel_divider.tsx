@@ -1,10 +1,17 @@
 import React from "react";
+
 import $ from 'domtastic';
 import { Frame } from "../frame";
 
 let dragTrack;
 
-export class PanelDivider extends React.Component {
+type PanelProps = {
+	index:  number,
+	target: any,
+	axis:   number,
+};
+
+export class PanelDivider extends React.Component<PanelProps, {}> {
 	render() {
 		let className : string;
 		if (this.props.axis == Frame.HORIZONTAL)
@@ -15,9 +22,9 @@ export class PanelDivider extends React.Component {
 		return (
 			<div
 				className={ className }
-				index={ this.props.index }
-				target={ this.props.target }
-				axis={ this.props.axis }
+				data-index={ this.props.index }
+				data-target={ this.props.target }
+				data-axis={ this.props.axis }
 				onMouseDown={ dragStartHandle }
 			></div>
 		);

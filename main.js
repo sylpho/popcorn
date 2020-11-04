@@ -1,12 +1,13 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1920,
-    height: 1080,
+		height: 1080,
+		frame: false,
     webPreferences: {
 			nodeIntegration: false, // is insecure but i'm not dealing with preload.js
 			enableRemoteModule: true, // turn off remote

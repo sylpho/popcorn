@@ -1,4 +1,6 @@
-const filePath : string = window.fs.configPath;
+// HACK! Gets rid of the missing property error
+var wnd = window as any;
+const filePath : string = wnd.fs.configPath;
 
 let config;
 
@@ -7,7 +9,7 @@ export namespace Config {
 		return new Promise((resolve, reject) => {
 			if (typeof config == "undefined") {
 				console.log('loading config');
-				window.fs.read(filePath, (err, data) => {
+				wnd.fs.read(filePath, (err, data) => {
 					if (err) reject(err);
 					else {
 						config = JSON.parse(data.toString());
@@ -20,7 +22,7 @@ export namespace Config {
 
 	export function commit(conf) {
 		return new Promise((resolve, reject) => {
-			window.fs.write(filePath, JSON.stringify(conf), (err) => {
+			wnd.fs.write(filePath, JSON.stringify(conf), (err) => {
 				if (err) reject(err);
 				else {
 					config = conf;

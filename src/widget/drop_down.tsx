@@ -1,8 +1,15 @@
 import React from "react";
-
 import { HoverReveal } from "../widget/hover_reveal"
 
-export class DropdownEntry extends React.Component {
+type DropdownEntryProps = {
+	label: string
+};
+
+type DropdownProps = {
+	items: any
+};
+
+export class DropdownEntry extends React.Component<DropdownEntryProps> {
 	render() {
 		return (
 			<div className="list-item">
@@ -12,7 +19,7 @@ export class DropdownEntry extends React.Component {
 	}
 }
 
-export class DropDown extends React.Component {
+export class DropDown extends React.Component<DropdownProps> {
 	render() {
 		const items = this.props.items
 		return (

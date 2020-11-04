@@ -1,5 +1,5 @@
 const { remote } = require("electron");
-const { app } = remote;
+const { app, dialog } = remote;
 
 const path = require("path");
 const fs = require("fs");
@@ -13,4 +13,9 @@ window.fs = {
 	configPath: path.join(app.getPath("userData"), 'config.json'),
 	write: fs.writeFile,
 	read: fs.readFile
+};
+
+
+window.menu = {
+	openFile: dialog.showOpenDialog
 };

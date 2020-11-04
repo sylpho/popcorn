@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { CSSProperties, ReactElement } from "react";
 import { PanelDivider } from "./widget/panel_divider";
 
 export namespace Frame {
@@ -54,7 +54,12 @@ export namespace Frame {
 		</Frame>
 	}
 
-	class Frame extends React.Component {
+	type FrameProps = {
+		id:    string,
+		style: CSSProperties
+	};
+
+	class Frame extends React.Component<FrameProps> {
 		render() {
 			return (
 				<div
