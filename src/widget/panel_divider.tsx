@@ -1,6 +1,5 @@
-import React from "react";
-
-import $ from 'domtastic';
+import React from "react"
+import $ from 'cash-dom';
 import { Frame } from "../frame";
 
 let dragTrack;
