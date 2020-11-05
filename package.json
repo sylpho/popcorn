@@ -32,6 +32,7 @@
   "dependencies": {
     "@babel/preset-react": "^7.12.1",
     "cash-dom": "^8.1.0",
+    "custom-electron-titlebar": "^3.2.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0"

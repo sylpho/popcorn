@@ -2,15 +2,16 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<!-- TODO(Someone): Properly set CSP -->
 		<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-		<meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+		<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'">
+		<meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'"> -->
 		<title>Popcorn</title>
 		<link rel="stylesheet" href="dist/css/normalize.css">
 		<link rel="stylesheet" href="dist/css/main.css">
-		<link rel="stylesheet" href="dist/css/css.gg.css">
 	</head>
-	<body id="root">
+	<body>
+		<div class="fullsize" id="root"></div>
 	</body>
 	<script src="dist/js/popcorn.bundle.js"></script>
 </html>
