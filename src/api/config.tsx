@@ -8,7 +8,6 @@ export namespace Config {
 	export function fetch() {
 		return new Promise((resolve, reject) => {
 			if (typeof config == "undefined") {
-				console.log('loading config');
 				wnd.fs.read(filePath, (err, data) => {
 					if (err) reject(err);
 					else {

@@ -14,6 +14,7 @@ window.fs = {
 	configPath: path.join(app.getPath("userData"), 'config.json'),
 	write: fs.writeFile,
 	read: fs.readFile,
+	normalize: path.normalize,
 	listFiles: (dir) => {
 		return new Promise((resolve, reject) => {
 			fs.readdir(dir, function (err, files) {
