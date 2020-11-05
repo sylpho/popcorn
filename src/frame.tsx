@@ -22,6 +22,7 @@ namespace Frame {
 			if (!(i + 1 == children.length))
 				newchildren.push(
 					<PanelDivider
+						key={ "div-" + i.toString() }
 						index={ ++dividerIndex }
 						target={ '#' + id }
 						axis={ axis }

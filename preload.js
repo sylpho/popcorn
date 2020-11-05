@@ -22,6 +22,55 @@ window.fs = {
 				else resolve(files);
 			});
 		});
+	},
+	readBlock: (path, start, amount) => {
+		return new Promise((resolve, reject) => {
+			var stats = fs.statSync(path);
+			var fileSizeInBytes = stats["size"];
+
+			// ensure we arent reading passed the end
+			if ((fileSizeInBytes - start) < amount)
+				amount = fileSizeInBytes - start;
+
+			// create read stream
+			let totalLines = [];
+			let lastLine = "";
+
+			let cursor = start;
+
+			fs.createReadStream(path, {
+				encoding: 'utf8',
+				start: start,
+				end: start + amount
+			}).on('data', (chunk) => {
+				const chunkString = chunk.toString();
+
+				// track where we ended reading
+				cursor += chunkString.length;
+
+				// convert chunk to string and split at newlines
+				let lines = chunkString.split(/\r?\n/);
+
+				// add previous incomplete line to this
+				lines[0] = lastLine + lines[0];
+
+				// store last line
+				lastLine = lines[lines.length - 1];
+
+				// if last line is incomplete, remove it from lines
+				if (lastLine[lastLine.length - 1] != '\n')
+					lines.pop();
+
+				// else, dont append it to our next read
+				else lastLine = "";
+
+				// add lines read to totalLines
+				totalLines = totalLines.concat(lines);
+			}).on('end', () => {
+				cursor -= lastLine.length;
+				resolve(totalLines, cursor)
+			}).on('error', reject);
+		});
 	}
 };
 
