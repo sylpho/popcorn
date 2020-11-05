@@ -12,7 +12,15 @@ const fs = require("fs");
 window.fs = {
 	configPath: path.join(app.getPath("userData"), 'config.json'),
 	write: fs.writeFile,
-	read: fs.readFile
+	read: fs.readFile,
+	listFiles: (dir) => {
+		return new Promise((resolve, reject) => {
+			fs.readdir(dir, function (err, files) {
+				if (err) reject(err)
+				else resolve(files);
+			});
+		});
+	}
 };
 
 
