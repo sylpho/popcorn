@@ -40,7 +40,8 @@ body {
 }
 
 .panel {
-	display: block;
+	display: grid;
+	grid: 1fr / auto;
 	overflow: hidden;
 }
 

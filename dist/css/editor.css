@@ -5,9 +5,9 @@
 }
 
 .editor {
-    display: grid;
-    grid: 1fr / auto 1fr;
-    font-family: "Fira Code", monospace;
+	display: grid;
+	grid: 1fr / auto 1fr;
+	font-family: "Fira Code", monospace;
 	font-weight: 300;
 	line-height: normal;
 }
@@ -17,35 +17,35 @@
 }
 
 .editor .code-block {
-    white-space: pre-wrap;
+	white-space: pre-wrap;
 }
-	
+
 .editor .gutter {
-    text-align: right;
-    background-color: rgba(1, 1, 1, 0.1);
-    padding-left: 1.5em;
-    padding-right: 0.5em;
-    margin-right: 0.5em;
+	text-align: right;
+	background-color: rgba(1, 1, 1, 0.1);
+	padding-left: 1.5em;
+	padding-right: 0.5em;
+	margin-right: 0.5em;
 }
 
 .editor .cursor {
-    display: block;
-    position: relative;
-    width: 2px;
-    height: 1.2em;
-    top: 0px;
-    left: 0px;
-    z-index: 1;
-    margin-bottom: -1.2em;
-    background-color: #000000;
+	display: block;
+	position: relative;
+	width: 2px;
+	height: 1.2em;
+	top: 0px;
+	left: 0px;
+	z-index: 1;
+	margin-bottom: -1.2em;
+	background-color: #000000;
 }
 
 #char-test {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    font-family: "Fira Code", monospace;
-    color: rgba(0, 0, 0, 0);
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	font-family: "Fira Code", monospace;
+	color: rgba(0, 0, 0, 0);
 }

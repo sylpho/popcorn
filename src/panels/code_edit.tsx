@@ -49,7 +49,11 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 							<CodeEditorCursor target={ this.props.id } />
 							{
 								this.state.lines.map((line : string, i : number) => {
-									return <p key={ 'l' + i.toString() }>{ line }</p>
+									return <p
+										key={ 'l' + i.toString() }>{
+											(line.length > 0) ? line : ' '
+										}
+									</p>
 								})
 							}
 						</div>
