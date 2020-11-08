@@ -7,10 +7,58 @@ type CodeEditorCursorProps = {
 };
 
 class CodeEditorCursor extends React.Component<CodeEditorCursorProps> {
+	state : {
+		x: number,
+		y: number
+	} = {
+		x: 0,
+		y: 0
+	}
+
 	render() {
 		return(
-			<div className="cursor"></div>
+			<div className="cursor" style={{
+				left: this.state.x + 'px',
+				top: this.state.y + 'px'
+			}}></div>
 		);
+	}
+
+	componentDidMount() {
+		$(document).on('keydown', (e) => {
+			const dim = getCharDimensions('a');
+
+			// TODO: prevent cursor from exceeding line length, and instead wrap to next line
+			switch (e.keyCode) {
+				case 37:
+					this.setState({
+						x: Math.max(0, this.state.x - (dim.width))
+					});
+
+					break;
+
+				case 39:
+					this.setState({
+						x: this.state.x + (dim.width)
+					});
+
+					break;
+
+				case 38:
+					this.setState({
+						y: Math.max(0, this.state.y - (dim.height))
+					});
+
+					break;
+
+				case 40:
+					this.setState({
+						y: this.state.y + dim.height
+					});
+
+					break;
+			}
+		});
 	}
 }
 
@@ -46,7 +94,8 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 							}
 						</div>
 						<div className="code-block">
-							<CodeEditorCursor target={ this.props.id } />
+							<CodeEditorCursor
+								target={ this.props.id } data-x="0" data-y="0"/>
 							{
 								this.state.lines.map((line : string, i : number) => {
 									return <p
@@ -65,7 +114,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 
 	componentDidMount() {
 		window.fs.readBlock(
-			this.props.path, 0, 1000
+			this.props.path, 0, 10000
 		).then((lines : string[], endCursor : number) => {
 			// update state
 			this.setState({
@@ -88,10 +137,7 @@ function getCharDimensions(character) {
 		$("#char-test")[0].innerHTML = character;
 
 		// measure the character
-		charDimensionCache[character] = {
-			width: $("#char-test")[0].offsetWidth,
-			height: $("#char-test")[0].offsetHeight
-		};
+		charDimensionCache[character] = $("#char-test")[0].getBoundingClientRect();
 	}
 
 	// return dimensions

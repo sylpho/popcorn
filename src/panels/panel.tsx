@@ -13,7 +13,7 @@ class Panel extends React.Component {
 			<div className="panel panel-shell">
 				<div className="panel">
 					<DropDown items={ dropdownItems }/>
-					{this.props.children}
+					{ this.props.children }
 				</div>
 			</div>
 		);
