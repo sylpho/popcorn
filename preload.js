@@ -15,11 +15,11 @@ window.fs = {
 	write: fs.writeFile,
 	read: fs.readFile,
 	normalize: path.normalize,
-	listFiles: (dir) => {
+	listFiles: async (dir) => {
 		return new Promise((resolve, reject) => {
-			fs.readdir(dir, function (err, files) {
+			fs.readdir(dir, { withFileTypes: true }, function (err, paths) {
 				if (err) reject(err)
-				else resolve(files);
+				else resolve(paths);
 			});
 		});
 	},
