@@ -1,64 +1,20 @@
-import React from "react";
+import React, { Component, ReactElement } from "react";
 import Panel from "./panel";
 import $ from "cash-dom";
 
 type CodeEditorCursorProps = {
-	target: string
+	x: number,
+	y: number
 };
 
 class CodeEditorCursor extends React.Component<CodeEditorCursorProps> {
-	state : {
-		x: number,
-		y: number
-	} = {
-		x: 0,
-		y: 0
-	}
-
 	render() {
 		return(
 			<div className="cursor" style={{
-				left: this.state.x + 'px',
-				top: this.state.y + 'px'
+				left: this.props.x + 'px',
+				top: this.props.y + 'px'
 			}}></div>
 		);
-	}
-
-	componentDidMount() {
-		$(document).on('keydown', (e) => {
-			const dim = getCharDimensions('a');
-
-			// TODO: prevent cursor from exceeding line length, and instead wrap to next line
-			switch (e.keyCode) {
-				case 37:
-					this.setState({
-						x: Math.max(0, this.state.x - (dim.width))
-					});
-
-					break;
-
-				case 39:
-					this.setState({
-						x: this.state.x + (dim.width)
-					});
-
-					break;
-
-				case 38:
-					this.setState({
-						y: Math.max(0, this.state.y - (dim.height))
-					});
-
-					break;
-
-				case 40:
-					this.setState({
-						y: this.state.y + dim.height
-					});
-
-					break;
-			}
-		});
 	}
 }
 
@@ -70,12 +26,14 @@ type CodeEditPanelProps = {
 export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	state : {
 		lines: string[],
-		cusor: { start: number, end: number },
-		block: { start: number, length: number }
+		fileCursor: { start: number, end: number },
+		block: { start: number, length: number },
+		cursor: { x: number, y: number }
 	} = {
 		lines: [],
-		cusor: { start: 0, end: 0 },
-		block: { start: 0, length: 0 }
+		fileCursor: { start: 0, end: 0 },
+		block: { start: 0, length: 0 },
+		cursor: { x: 0, y: 0 }
 	}
 
 	render() {
@@ -95,7 +53,9 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 						</div>
 						<div className="code-block">
 							<CodeEditorCursor
-								target={ this.props.id } data-x="0" data-y="0"/>
+								x={ this.state.cursor.x }
+								y={ this.state.cursor.y }
+							/>
 							{
 								this.state.lines.map((line : string, i : number) => {
 									return <p
@@ -113,6 +73,8 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	}
 
 	componentDidMount() {
+		// TODO: watch file for external changes
+		// TODO: read appropriate segment of file on scroll
 		window.fs.readBlock(
 			this.props.path, 0, 10000
 		).then((lines : string[], endCursor : number) => {
@@ -126,6 +88,50 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 			// TODO: visual error
 			console.log(err);
 		});
+
+		$(document).on('keydown', (e) => {
+			const dim = getCharDimensions('a');
+
+			let newX : number = this.state.cursor.x;
+			let newY : number = this.state.cursor.y;
+
+			// TODO: prevent cursor from exceeding line length, and instead wrap to next line
+			if (e.keyCode == 37) newX = Math.max(0, this.state.cursor.x - dim.width);
+			else if (e.keyCode == 39) newX = this.state.cursor.x + dim.width;
+			else if (e.keyCode == 38) newY = Math.max(0, this.state.cursor.y - dim.height);
+			else if (e.keyCode == 40) newY = this.state.cursor.y + dim.height;
+			else return;
+
+			e.preventDefault();
+
+			this.setState({
+				cursor: {
+					x: newX, y: newY
+				}
+			});
+
+			console.log({
+				x: newX, y: newY
+			});
+		});
+	}
+}
+
+export class Editor {
+	component : ReactElement;
+
+	state: {
+		lines: string[],
+		cusor: { start: number, end: number },
+		block: { start: number, length: number }
+	} = {
+		lines: [],
+		cusor: { start: 0, end: 0 },
+		block: { start: 0, length: 0 }
+	};
+
+	constructor(path : string) {
+		this.component = <CodeEditPanel key="2" id="edit-1" path={ path } />;
 	}
 }
 
