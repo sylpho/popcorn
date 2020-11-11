@@ -10,9 +10,7 @@ export function code_edit_type(
 	let lineCopy = cp.state.lines;
 	const line = lineCopy[blockLine];
 	lineCopy[blockLine] = [
-		line.slice(0, cursorCol),
-		e.key,
-		line.slice(cursorCol)
+		line.slice(0, cursorCol), e.key, line.slice(cursorCol)
 	].join('');
 
 	// update state, also moving cursor
