@@ -9,7 +9,7 @@ export function code_edit_move(
 	const hasUTF_BOM = cp.state.lines[0].charCodeAt(0) == 65279;
 
 	e.preventDefault();
-
+	
 	// left
 	if (e.keyCode == 37) {
 		newX -= dim.width;

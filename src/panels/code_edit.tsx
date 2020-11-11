@@ -138,6 +138,10 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 		// new line
 		else if (e.keyCode == 13)
 			code_edit_enter(blockLine, cursorCol, dim, this);
+
+		// dont make space tab down
+		else if (e.keyCode == 32)
+			e.preventDefault();
 	}
 
 	mouseDownHandler(e) {

@@ -7,10 +7,19 @@ export function code_edit_type(
 	dim: any,
 	cp : CodeEditPanel
 ) {
+	// dont handle control calls
+	if (e.ctrlKey) return;
+
+	// dont handle the enter event
+	if (e.keyCode == 13) return;
+
 	let lineCopy = cp.state.lines;
 	const line = lineCopy[blockLine];
+
+	const key = e.shiftKey ? e.key.toUpperCase() : e.key;
+
 	lineCopy[blockLine] = [
-		line.slice(0, cursorCol), e.key, line.slice(cursorCol)
+		line.slice(0, cursorCol), key, line.slice(cursorCol)
 	].join('');
 
 	// update state, also moving cursor
