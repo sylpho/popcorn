@@ -21,6 +21,10 @@
 	white-space: pre-wrap;
 }
 
+.editor .code-block:focus {
+  outline: none;
+}
+
 .editor .gutter {
 	text-align: right;
 	background-color: rgba(1, 1, 1, 0.1);
