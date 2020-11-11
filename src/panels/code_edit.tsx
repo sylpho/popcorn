@@ -141,6 +141,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	}
 
 	mouseDownHandler(e) {
+		// TODO: extract into own file and call via event
 		const dim = getCharDimensions('a');
 		const bounds : DOMRect = $("#" + this.props.id + "-code")[0]
 			.getBoundingClientRect();
