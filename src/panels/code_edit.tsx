@@ -39,7 +39,6 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	render() {
 		return (
 			<Panel>
-				<p id="char-test">a</p>
 				<div className="editor-wrapper">
 					<div className="editor">
 						<div className="gutter">
@@ -81,7 +80,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 			// update state
 			this.setState({
 				lines: lines,
-				cusor: { start: 0, end: endCursor },
+				fileCusor: { start: 0, end: endCursor },
 				block: { start: 0, length: lines.length }
 			});
 		}).catch((err) => {
@@ -90,48 +89,178 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 		});
 
 		$(document).on('keydown', (e) => {
+			const hasUTF_BOM = this.state.lines[0].charCodeAt(0) == 65279;
 			const dim = getCharDimensions('a');
 
-			let newX : number = this.state.cursor.x;
-			let newY : number = this.state.cursor.y;
+			const cursorLine = this.state.cursor.y / dim.height;
+			const blockLine = cursorLine - this.state.block.start;
 
-			// TODO: prevent cursor from exceeding line length, and instead wrap to next line
-			if (e.keyCode == 37) newX = Math.max(0, this.state.cursor.x - dim.width);
-			else if (e.keyCode == 39) newX = this.state.cursor.x + dim.width;
-			else if (e.keyCode == 38) newY = Math.max(0, this.state.cursor.y - dim.height);
-			else if (e.keyCode == 40) newY = this.state.cursor.y + dim.height;
-			else return;
+			// get cursor column; compensating for potential UTF BOM
+			let cursorCol = this.state.cursor.x / dim.width;
+			if (cursorLine == 0 && hasUTF_BOM)
+				cursorCol++;
 
-			e.preventDefault();
+			// movement keys
+			if (e.keyCode >= 37 && e.keyCode <= 40) {
+				let newX: number = this.state.cursor.x;
+				let newY: number = this.state.cursor.y;
 
-			this.setState({
-				cursor: {
-					x: newX, y: newY
+				e.preventDefault();
+
+				// left
+				if (e.keyCode == 37) {
+					newX -= dim.width;
+					if (newX < 0) {
+						// dont do anything if we're at the topmost line
+						if (newY == 0) return;
+
+						newY -= dim.height;
+
+						// set newX to the end of the previous line, keeping in mind UTF BOM
+						let lineLength = this.state.lines[newY / dim.height].length;
+						if (newY == 0 && hasUTF_BOM) lineLength -= 1;
+						
+						newX = lineLength * dim.width;
+					}
 				}
-			});
 
-			console.log({
-				x: newX, y: newY
-			});
+				// right
+				else if (e.keyCode == 39) {
+					newX += dim.width;
+
+					let lineLength = this.state.lines[newY / dim.height].length;
+					if (newY == 0 && hasUTF_BOM) lineLength -= 1;
+
+					if (newX > lineLength * dim.width)
+					{
+						// TODO: ensure there is another line to go to
+						newY += dim.height;
+						newX = 0;
+					}
+				}
+
+				else {
+					// up
+					if (e.keyCode == 38)
+						newY = Math.max(0, this.state.cursor.y - dim.height);
+
+					// down
+					else if (e.keyCode == 40) newY += dim.height;
+
+					// clamp, keeping in mind possible UTF BOM
+					let lineLength = this.state.lines[newY / dim.height].length;
+					if (newY == 0 && hasUTF_BOM) lineLength -= 1;
+					newX = Math.min(newX, lineLength * dim.width);
+				}
+
+				this.setState({
+					cursor: {
+						x: newX, y: newY
+					}
+				});
+			}
+
+			// backspace key
+			else if (e.keyCode == 8) {
+				let lineCopy = this.state.lines;
+
+				// if we delete the start, go to previous line
+				if (cursorCol == 0) {
+					if (cursorLine == 0) return;
+
+					// append previous line and dete current line
+					const prevLine = lineCopy[blockLine - 1];
+					lineCopy[blockLine - 1] = prevLine + lineCopy[blockLine];
+					lineCopy.splice(blockLine, 1);
+
+					// update state, also moving cursor
+					this.setState({
+						lines: lineCopy,
+						cursor: {
+							x: prevLine.length * dim.width,
+							y: this.state.cursor.y - dim.height
+						}
+					});
+				}
+
+				// delete a normal character
+				else {
+					// delete character
+					let line = this.state.lines[blockLine];
+					lineCopy[blockLine] = line.substring(0, cursorCol - 1) + line.substring(cursorCol, line.length);
+
+					// update state, also moving cursor
+					this.setState({
+						lines: lineCopy,
+						cursor: {
+							x: this.state.cursor.x - dim.width,
+							y: this.state.cursor.y
+						}
+					});
+				}
+			}
+
+			// delete key
+			else if (e.keyCode == 46) {
+				const line = this.state.lines[blockLine];
+				let lineCopy = this.state.lines;
+
+				// deleting the newline character
+				if (cursorCol == line.length) {
+					// abort if there is no next line
+					if (blockLine == this.state.lines.length - 1) return;
+
+					// append next line and delete next line
+					lineCopy[blockLine] = line + lineCopy[blockLine + 1];
+					lineCopy.splice(blockLine + 1, 1);
+				}
+
+				// delete as normal
+				else
+					lineCopy[blockLine] = line.substring(0, cursorCol) + line.substring(cursorCol + 1, line.length);
+
+				// update state
+				this.setState({
+					lines: lineCopy
+				});
+			}
+
+			// new line
+			else if (e.keyCode == 13) {
+				let lineCopy = this.state.lines;
+				const line = this.state.lines[blockLine];
+				const lineEnd = line.substring(cursorCol);
+				lineCopy[blockLine] = line.substring(0, cursorCol);
+				lineCopy.splice(blockLine + 1, 0, lineEnd)
+
+				this.setState({
+					lines: lineCopy,
+					cursor: {
+						x: 0,
+						y: this.state.cursor.y + dim.height
+					}
+				});
+			}
+
+			// typing a character
+			else {
+				// only type single character things
+				if (e.key.length != 1) return;
+
+				let lineCopy = this.state.lines;
+				const line = lineCopy[blockLine];
+				lineCopy[blockLine] = [line.slice(0, cursorCol), e.key, line.slice(cursorCol)].join('');
+
+				// update state, also moving cursor
+				this.setState({
+					lines: lineCopy,
+					cursor: {
+						x: this.state.cursor.x + dim.width,
+						y: this.state.cursor.y
+					}
+				});
+			}
 		});
-	}
-}
-
-export class Editor {
-	component : ReactElement;
-
-	state: {
-		lines: string[],
-		cusor: { start: number, end: number },
-		block: { start: number, length: number }
-	} = {
-		lines: [],
-		cusor: { start: 0, end: 0 },
-		block: { start: 0, length: 0 }
-	};
-
-	constructor(path : string) {
-		this.component = <CodeEditPanel key="2" id="edit-1" path={ path } />;
 	}
 }
 
