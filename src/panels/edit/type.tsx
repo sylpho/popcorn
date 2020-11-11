@@ -13,6 +13,9 @@ export function code_edit_type(
 	// dont handle the enter event
 	if (e.keyCode == 13) return;
 
+	// dont make space tab down
+	if (e.keyCode == 0) e.preventDefault();
+
 	let lineCopy = cp.state.lines;
 	const line = lineCopy[blockLine];
 
