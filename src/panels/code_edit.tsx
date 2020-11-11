@@ -136,7 +136,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 
 			// backspace key
 			else if (e.keyCode == 8)
-				code_edit_backspace(blockLine, cursorLine, dim, this);
+				code_edit_backspace(blockLine, cursorCol, cursorLine, dim, this);
 
 			// delete key
 			else if (e.keyCode == 46)
