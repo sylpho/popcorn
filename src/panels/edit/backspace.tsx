@@ -2,15 +2,17 @@ import { CodeEditPanel } from "../code_edit";
 
 export function code_edit_backspace(
 	blockLine : number,
-	cursorCol : number,
 	cursorLine : number,
 	dim : any,
 	cp : CodeEditPanel
 ) {
 	let lineCopy = cp.state.lines;
 
+	// we ignore utf BOM
+	let cursorCol = cp.state.cursor.x / dim.width;
+
 	// if we delete the start, go to previous line
-	if (cursorCol == 0) {
+	if (cursorCol <= 0) {
 		if (cursorLine == 0) return;
 
 		// append previous line and dete current line

@@ -95,7 +95,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 		let cursorCol = this.state.cursor.x / dim.width;
 		if (cursorLine == 0 && hasUTF_BOM)
 			cursorCol++;
-			
+
 		code_edit_type(blockLine, cursorCol, e, dim, this);
 	}
 
@@ -136,7 +136,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 
 			// backspace key
 			else if (e.keyCode == 8)
-				code_edit_backspace(blockLine, cursorCol, cursorLine, dim, this);
+				code_edit_backspace(blockLine, cursorLine, dim, this);
 
 			// delete key
 			else if (e.keyCode == 46)
