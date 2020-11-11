@@ -49,15 +49,14 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 
 		this.keyInputHandle = this.keyInputHandle.bind(this);
 		this.keyActionHandle = this.keyActionHandle.bind(this);
+		this.mouseDownHandler = this.mouseDownHandler.bind(this);
+		this.selectHandler = this.selectHandler.bind(this);
 	}
 
 	render() {
 		return (
 			<Panel>
-				<div className="editor-wrapper"
-					tabIndex={ -1 }
-					onKeyDown={ this.keyActionHandle }
-					onKeyPress={ this.keyInputHandle }>
+				<div className="editor-wrapper">
 					<div className="editor">
 						<div className="gutter">
 							{
@@ -68,7 +67,13 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 								})
 							}
 						</div>
-						<div className="code-block">
+						<div className="code-block"
+							id={this.props.id + "-code"}
+							tabIndex={-1}
+							onKeyDown={this.keyActionHandle}
+							onKeyPress={this.keyInputHandle}
+							onMouseDown={this.mouseDownHandler}
+							onSelect={this.selectHandler}>
 							<CodeEditorCursor
 								x={ this.state.cursor.x }
 								y={ this.state.cursor.y }
@@ -90,6 +95,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	}
 
 	keyInputHandle(e) {
+		// TODO: emit event instead of handling all manually
 		const dim = getCharDimensions('a');
 		const hasUTF_BOM = this.state.lines[0].charCodeAt(0) == 65279;
 
@@ -105,6 +111,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	}
 
 	keyActionHandle(e) {
+		// TODO: emit event instead of handling all manually
 		const dim = getCharDimensions('a');
 		const hasUTF_BOM = this.state.lines[0].charCodeAt(0) == 65279;
 
@@ -131,6 +138,31 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 		// new line
 		else if (e.keyCode == 13)
 			code_edit_enter(blockLine, cursorCol, dim, this);
+	}
+
+	mouseDownHandler(e) {
+		const dim = getCharDimensions('a');
+		const bounds : DOMRect = $("#" + this.props.id + "-code")[0]
+			.getBoundingClientRect();
+
+		const clickX : number = e.pageX - bounds.x;
+		const clickY : number = e.pageY - bounds.y;
+
+		const cursorLine : number = Math.floor(clickY / dim.height);
+		const blockLine : number = cursorLine - this.state.block.start;
+		const lineWidth : number = this.state.lines[blockLine].length * dim.width;
+
+		// move cursor
+		this.setState({
+			cursor: {
+				x: Math.min(lineWidth, Math.round(clickX / dim.width) * dim.width),
+				y: Math.floor(clickY / dim.height) * dim.height
+			}
+		});
+	}
+
+	selectHandler(e) {
+		// console.log(e);
 	}
 
 	componentDidMount() {
