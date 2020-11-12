@@ -15,6 +15,7 @@ window.fs = {
 	write: fs.writeFile,
 	read: fs.readFile,
 	normalize: path.normalize,
+	path: path,
 	listFiles: async (dir) => {
 		return new Promise((resolve, reject) => {
 			fs.readdir(dir, { withFileTypes: true }, function (err, paths) {

@@ -1,6 +1,7 @@
 import React from "react";
 import fs    from "fs";
 import path  from "path";
+import Panel from "./panel";
 
 /**
  * Describes if the node is a branch node.
@@ -36,10 +37,44 @@ class FileHierarchyNode {
 	/**
 	 * Constructs a FileHierarchyNode with the given path name.
 	 * @param pathName The name of the path for this node in the hierarchy.
+	 * @param nodeType The type of the node.
 	 */
 	public constructor(pathName: string, nodeType: number) {
-		this.pathName = pathName;
-		this.nodeType = nodeType;
+		this.pathName   = pathName;
+		this.nodeType   = nodeType;
+		this.childNodes = [];
+	}
+
+	/**
+	 * Renders out the file hierarchy node.
+	 * @returns The file hierarchy node as a react element.
+	 */
+	public render(): React.ReactElement {
+		// Convert children to elements.
+		let children: React.ReactElement[] = [];
+		this.childNodes.forEach((child: FileHierarchyNode) => {
+			children.push(child.render());
+		});
+
+		// Create an object.
+		let divAttrs = {
+			id: this.nodeType === BRANCH_NODE ? "PopFolderNode" : "PopFileNode",
+			className: this.nodeType === BRANCH_NODE ? "folder" : "file"
+		};
+
+		// Create an object.
+		let spanAttrs = {
+			className: this.nodeType === BRANCH_NODE ? "folderName" : "fileName"
+		};
+
+		// Return results.
+		console.log("This is happening");
+		return (
+			<div key={ this.pathName } {...divAttrs}>
+				<span {...spanAttrs}>{ this.pathName }</span>
+				{ children }
+			</div>
+		);
 	}
 }
 
@@ -64,7 +99,7 @@ class FileHierarchy {
 	 * Creates a hierarchy from the given root.
 	 * @param rootPath The root path of the hierarchy to load.
 	 */
-	public static loadFrom(rootPath: string) : FileHierarchy {
+	public static loadFrom(rootPath: string): FileHierarchy {
 		return new FileHierarchy(rootPath);
 	}
 
@@ -72,16 +107,22 @@ class FileHierarchy {
 	 * Loads the given directory into a file hierarchy node.
 	 * @param dirPath The path of the directory to load.
 	 */
-	private static loadDirectory(dirPath: string) : FileHierarchyNode {
-		let   node     = new FileHierarchyNode(dirPath, BRANCH_NODE);
-		const wnd      = window as any;
+	private static loadDirectory(dirPath: string): FileHierarchyNode {
+		// Normalize directory path.
+		const wnd     = window as any;
+		      dirPath = wnd.fs.normalize(dirPath);
+
+		// Break up the dir and get the name of the last directory.
+		const segs     = dirPath.split(wnd.fs.path.sep);
+		const rootName = segs[segs.length - 2];
+		const node     = new FileHierarchyNode(rootName, BRANCH_NODE);
 		wnd.fs.listFiles(dirPath).then((entries: fs.Dirent[]) => {
 			// List each directory entry.
 			entries.forEach((ent: fs.Dirent) => {
 				// Check what type of directory entry this is.
 				if (ent.isDirectory()) {
 					// Another directory.
-					const root   : string            = path.join(dirPath, ent.name);
+					const root   : string            = dirPath.concat(ent.name, wnd.fs.path.sep);
 					const branch : FileHierarchyNode = this.loadDirectory(root);
 					node.childNodes.push(branch);
 				} else if (ent.isFile()) {
@@ -94,42 +135,55 @@ class FileHierarchy {
 
 		return node;
 	}
+
+	/**
+	 * Renders out the entire hierarchy to the folder view.
+	 */
+	// public render(): React.ReactElement {
+	// 	// Convert children to elements.
+	// 	console.log(this.rootNode.childNodes.length);
+	// 	let children: React.ReactElement[] = [];
+	// 	this.rootNode.childNodes.forEach((child: FileHierarchyNode) => {
+	// 		children.push(child.render());
+	// 	});
+
+	// 	// Return results.
+	// 	return (
+
+	// 	);
+	// }
 }
+
+/**
+ * Represents the type of the props that the folder view panel needs.
+ */
+type FolderViewPanelProps = {
+	rootPath: string;
+};
 
 /**
  * Represents the folder view panel.
  */
-class FolderViewPanel extends React.Component {
+class FolderViewPanel extends React.Component<FolderViewPanelProps> {
 	/**
-	 * The hierarchy that is loaded at any time.
+	 * Renders out the entire file hierarchy.
 	 */
-	private hierarchy: FileHierarchy;
+	public render(): JSX.Element {
+		const hierarchy: FileHierarchy = FileHierarchy.loadFrom(this.props.rootPath);
+		let children: React.ReactElement[] = [];
+		hierarchy.rootNode.childNodes.forEach((child: FileHierarchyNode) => {
+			children.push(child.render());
+		});
+		console.log(hierarchy.rootNode.childNodes.length);
 
-	/**
-	 * Loads the hierarchy at the given path.
-	 * @param rootPath The root path of the hierarchy.
-	 */
-	public loadHierarchy(rootPath: string) : void {
-		this.hierarchy = undefined; // Clear hierarchy first.
-		this.hierarchy = FileHierarchy.loadFrom(rootPath);
-	}
-
-	/***/
-	private renderHierarchy() : React.ReactElement[] {
-		var rootElements: React.ReactElement[];
-		// TODO(Someone): Make this work
-		return rootElements;
-	}
-
-	/***/
-	public render() : JSX.Element {
 		return (
-			<div className="" id="PopFileHierarchyPanel" style={{}}>
-				{ this.renderHierarchy() }
-			</div>
+			<Panel>
+				<div className="fileHierarchy" id="PopFileHierarchyPanel">
+					{ children }
+				</div>
+			</Panel>
 		);
 	}
-
 }
 
 export default FolderViewPanel;
