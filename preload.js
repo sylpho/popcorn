@@ -4,6 +4,7 @@ const customTitlebar = require("custom-electron-titlebar");
 
 const path = require("path");
 const fs = require("fs");
+const { resolve } = require("dns");
 
 /*
 	TODO:
@@ -37,17 +38,13 @@ window.fs = {
 			let totalLines = [];
 			let lastLine = "";
 
-			let cursor = start;
-
 			fs.createReadStream(path, {
 				encoding: 'utf8',
+				flag: 'r',
 				start: start,
 				end: start + amount
 			}).on('data', (chunk) => {
 				const chunkString = chunk.toString();
-
-				// track where we ended reading
-				cursor += chunkString.length;
 
 				// convert chunk to string and split at newlines
 				let lines = chunkString.split(/\r?\n/);
@@ -68,9 +65,58 @@ window.fs = {
 				// add lines read to totalLines
 				totalLines = totalLines.concat(lines);
 			}).on('end', () => {
-				cursor -= lastLine.length;
-				resolve(totalLines, cursor)
+				let cl = 0;
+				totalLines.forEach(line => cl += Buffer.byteLength(line, 'utf8'));
+				console.log("Cl is " + cl);
+
+				resolve(totalLines)
 			}).on('error', reject);
+		});
+	},
+	strBytes: (str) => {
+		return Buffer.byteLength(str, 'utf8');
+	},
+	overwriteBlock: (start, end, lines, sourcePath) => {
+		const dpath = sourcePath + "-cache.txt";
+		const wstream = fs.createWriteStream(dpath);
+
+		return new Promise((resolve, reject) => {
+			if (start == 0) resolve();
+			else {
+				fs.createReadStream(sourcePath, {
+					encoding: 'utf8',
+					flag: 'r',
+					start: 0,
+					end: start
+				}).on('data', (chunk) => {
+					wstream.write(chunk.toString())
+				}).on('end', () => {
+					resolve();
+				}).on('error', reject);
+			}
+		}).then(() => {
+			lines.forEach(line => wstream.write(line + '\n'));
+			return;
+		}).then(() => {
+			return new Promise((resolve, reject) => {
+				console.log("end is " + end);
+				fs.createReadStream(sourcePath, {
+					encoding: 'utf8',
+					flag: 'r',
+					start: end
+				}).on('data', (chunk) => {
+					wstream.write(chunk.toString())
+				}).on('end', () => {
+					resolve();
+				}).on('error', reject);
+			});
+		}).then(() => {
+			return new Promise((resolve, reject) => {
+				fs.copyFile(dpath, sourcePath, (err) => {
+					if (err) reject(err);
+					else resolve();
+				});
+			})
 		});
 	}
 };

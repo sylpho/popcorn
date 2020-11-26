@@ -35,19 +35,18 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	state : {
 		lines: string[],
 		fileCursor: { start: number, end: number },
-		block: { start: number, length: number },
-		cursor: { x: number, y: number }
+		cursor: { x: number, y: number },
+		firstLine: number
 	} = {
 		lines: [],
 		fileCursor: { start: 0, end: 0 },
-		block: { start: 0, length: 0 },
-		cursor: { x: 0, y: 0 }
+		cursor: { x: 0, y: 0 },
+		firstLine: 0
 	}
 
 	constructor(props) {
 		super(props);
 
-		this.keyInputHandle = this.keyInputHandle.bind(this);
 		this.keyActionHandle = this.keyActionHandle.bind(this);
 		this.mouseDownHandler = this.mouseDownHandler.bind(this);
 		this.selectHandler = this.selectHandler.bind(this);
@@ -60,20 +59,19 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 					<div className="editor">
 						<div className="gutter">
 							{
-								[...Array(this.state.block.length)].map(
-									(_, i) => this.state.block.start + i
+								[...Array(this.state.lines.length)].map(
+									(_, i) => this.state.firstLine + i
 								).map((num) => {
 									return <p key={ 'g' + num.toString() }>{ num }</p>
 								})
 							}
 						</div>
 						<div className="code-block"
-							id={this.props.id + "-code"}
-							tabIndex={-1}
-							onKeyDown={this.keyActionHandle}
-							onKeyPress={this.keyInputHandle}
-							onMouseDown={this.mouseDownHandler}
-							onSelect={this.selectHandler}>
+							id={ this.props.id + "-code" }
+							tabIndex={ -1 }
+							onKeyDown={ this.keyActionHandle }
+							onMouseDown={ this.mouseDownHandler }
+							onSelect={ this.selectHandler }>
 							<CodeEditorCursor
 								x={ this.state.cursor.x }
 								y={ this.state.cursor.y }
@@ -94,29 +92,13 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 		);
 	}
 
-	keyInputHandle(e) {
-		// TODO: emit event instead of handling all manually
-		const dim = getCharDimensions('a');
-		const hasUTF_BOM = this.state.lines[0].charCodeAt(0) == 65279;
-
-		const cursorLine = this.state.cursor.y / dim.height;
-		const blockLine = cursorLine - this.state.block.start;
-
-		// get cursor column; compensating for potential UTF BOM
-		let cursorCol = this.state.cursor.x / dim.width;
-		if (cursorLine == 0 && hasUTF_BOM)
-			cursorCol++;
-
-		code_edit_type(blockLine, cursorCol, e, dim, this);
-	}
-
 	keyActionHandle(e) {
 		// TODO: emit event instead of handling all manually
 		const dim = getCharDimensions('a');
 		const hasUTF_BOM = this.state.lines[0].charCodeAt(0) == 65279;
 
 		const cursorLine = this.state.cursor.y / dim.height;
-		const blockLine = cursorLine - this.state.block.start;
+		const blockLine = cursorLine - this.state.firstLine;
 
 		// get cursor column; compensating for potential UTF BOM
 		let cursorCol = this.state.cursor.x / dim.width;
@@ -138,6 +120,13 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 		// new line
 		else if (e.keyCode == 13)
 			code_edit_enter(blockLine, cursorCol, dim, this);
+
+		// typed character
+		else if (e.key.length == 1)
+			code_edit_type(blockLine, cursorCol, e, dim, this);
+
+		// save change
+		this.save();
 	}
 
 	mouseDownHandler(e) {
@@ -150,7 +139,7 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 		const clickY : number = e.pageY - bounds.y;
 
 		const cursorLine : number = Math.floor(clickY / dim.height);
-		const blockLine : number = cursorLine - this.state.block.start;
+		const blockLine : number = cursorLine - this.state.firstLine;
 		const lineWidth : number = this.state.lines[blockLine].length * dim.width;
 
 		// move cursor
@@ -169,15 +158,49 @@ export class CodeEditPanel extends React.Component<CodeEditPanelProps> {
 	componentDidMount() {
 		// TODO: watch file for external changes
 		// TODO: read appropriate segment of file on scroll
+		this.loadBlock(0, 0, 10000);
+	}
+
+	loadBlock(offset : number, lineNumber : number, blockSize : number) {
 		window.fs.readBlock(
-			this.props.path, 0, 10000
-		).then((lines : string[], endCursor : number) => {
+			this.props.path, offset, blockSize
+		).then((lines: string[]) => {
+			// compute end cursor. we add one to each line for newline
+			let end = offset;
+			lines.forEach(line => end += window.fs.strBytes(line) + 1);
+			console.log("computed end " + end);
+
 			// update state
 			this.setState({
 				lines: lines,
-				fileCusor: { start: 0, end: endCursor },
-				block: { start: 0, length: lines.length }
+				fileCursor: { start: offset, end: end },
+				firstLine: lineNumber
 			});
+		}).catch((err) => {
+			// TODO: visual error
+			console.log(err);
+		});
+	}
+
+	save() {
+		// write block into file
+		window.fs.overwriteBlock(
+			this.state.fileCursor.start,
+			this.state.fileCursor.end,
+			this.state.lines,
+			this.props.path
+		).then(() => {
+			// compute new block end cursor. add one to each line for newline
+			let end = this.state.fileCursor.start;
+			this.state.lines.forEach(line => end += window.fs.strBytes(line) + 1);
+			this.setState({
+				fileCursor: {
+					start: this.state.fileCursor.start,
+					end: end
+				}
+			});
+
+			console.log("updated");
 		}).catch((err) => {
 			// TODO: visual error
 			console.log(err);
